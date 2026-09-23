@@ -41,3 +41,52 @@ body {
   border-radius: 6px;
   pointer-events: none;
 }
+
+.badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 7px 4px;
+  border-radius: 8px;
+  background: #fff8ec;
+  color: #5a3d2b;
+  box-shadow: 0 2px 6px rgba(70, 45, 20, 0.2);
+  font: 800 11px/1 'Nunito', system-ui, sans-serif;
+  pointer-events: none;
+}
+
+.badge-bar {
+  width: 34px;
+  height: 4px;
+  border-radius: 2px;
+  background: #f0e2c6;
+  overflow: hidden;
+}
+
+.badge-fill {
+  height: 100%;
+  width: 0;
+  background: #f2b53a;
+}
+
+.badge.full {
+  background: #f2b53a;
+  animation: badge-pulse 1.2s ease-in-out infinite;
+}
+
+.badge.full .badge-fill {
+  background: #5a3d2b;
+}
+
+@keyframes badge-pulse {
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge.full {
+    animation: none;
+  }
+}

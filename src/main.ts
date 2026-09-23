@@ -4,6 +4,7 @@ import { createRegistry } from './content/registry';
 import { createFpsMeter } from './game/fps';
 import { attachInput } from './game/input';
 import { startLoop } from './game/loop';
+import { registerDefaultArt } from './render/art/registry';
 import { createWorldView } from './render/view';
 import { createInitialState } from './sim/state';
 
@@ -11,9 +12,10 @@ const root = document.getElementById('app');
 if (!root) throw new Error('#app not found');
 
 const reg = createRegistry(DEFAULT_PACKS);
+registerDefaultArt();
 const seed = Number(new URLSearchParams(location.search).get('seed')) || 1;
 const state = createInitialState(seed, reg);
-const view = createWorldView(root, state);
+const view = createWorldView(root, state, reg);
 const canvas = view.ctx.renderer.domElement;
 
 const fps = createFpsMeter();
@@ -41,8 +43,8 @@ window.addEventListener('keydown', (e) => {
 startLoop({
   getSpeed: () => 0,
   step: () => {},
-  render: (dt) => {
-    view.frame(dt);
+  render: (dt, time) => {
+    view.frame(state, dt, time);
     fps.frame(dt);
   },
 });
