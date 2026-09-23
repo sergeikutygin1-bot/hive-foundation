@@ -1,0 +1,43 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: linear-gradient(180deg, #d4ebf3 0%, #e7f1dc 100%);
+  font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+}
+
+.world-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  touch-action: none;
+}
+
+.world-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.fps {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  font: 700 12px/1 ui-monospace, monospace;
+  color: #5a3d2b;
+  background: rgba(255, 248, 236, 0.8);
+  padding: 4px 6px;
+  border-radius: 6px;
+  pointer-events: none;
+}

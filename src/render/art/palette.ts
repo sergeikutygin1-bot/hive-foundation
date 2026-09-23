@@ -1,0 +1,43 @@
+/** Every color in the game world. Tune these at the art gate (Task 17). */
+export const palette = {
+  ground: '#5d7a45',
+  grass: '#9fd46b',
+  grassLocked: '#b4c38f',
+  soil: '#7c5237',
+  water: '#79c3de',
+  tuft: '#6d9c47',
+  trunk: '#7a5236',
+  leaf1: '#6cab4f',
+  leaf2: '#87c45c',
+  leaf3: '#55953f',
+  pine: '#3f7d4c',
+  pine2: '#4a8c57',
+  rock: '#a3a39b',
+  wall: '#f1e4c6',
+  timber: '#8a5a3b',
+  roof: '#e2723c',
+  roofDark: '#c85e2e',
+  door: '#6b4127',
+  window: '#a6d8ea',
+  wood: '#b98650',
+  hiveCream: '#f4e7c5',
+  hiveCream2: '#eadbb2',
+  hiveDark: '#3b2a1e',
+  stem: '#5f9a3f',
+  flowerCenter: '#f2b53a',
+  suit: '#f7f5ef',
+  skin: '#f1c7a5',
+  hat: '#e8d4a2',
+  glove: '#dcd2bb',
+  veil: '#ffffff',
+  highlightHover: '#ffffff',
+  highlightValid: '#7ed957',
+  highlightInvalid: '#e5534b',
+  range: '#f2b53a',
+  fog: '#dfeee0',
+} as const;
+
+/** Petal colors per flower type (SourceDef.flowerType). */
+export const flowerColors: Record<string, readonly string[]> = {
+  wildflower: ['#ffffff', '#f8c9dc', '#fff1a6', '#d9c8f5'],
+};
