@@ -1,45 +1,48 @@
-import * as THREE from 'three';
-import { startLoop } from './game/loop';
+import './base.css';
+import { DEFAULT_PACKS } from './content/default';
+import { createRegistry } from './content/registry';
 import { createFpsMeter } from './game/fps';
+import { attachInput } from './game/input';
+import { startLoop } from './game/loop';
+import { createWorldView } from './render/view';
+import { createInitialState } from './sim/state';
 
-const app = document.getElementById('app');
-if (!app) throw new Error('#app not found');
+const root = document.getElementById('app');
+if (!root) throw new Error('#app not found');
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(window.innerWidth, window.innerHeight);
-app.appendChild(renderer.domElement);
-
-const scene = new THREE.Scene();
-scene.background = new THREE.Color('#cfe8f3');
-const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 200);
-camera.position.set(0, 3, 4);
-camera.lookAt(0, 0, 0);
-
-scene.add(new THREE.HemisphereLight('#ffffff', '#6b8f4e', 1.2));
-const sun = new THREE.DirectionalLight('#fff4e0', 2);
-sun.position.set(3, 5, 2);
-scene.add(sun);
-
-const prism = new THREE.Mesh(
-  new THREE.CylinderGeometry(1, 1, 0.3, 6),
-  new THREE.MeshLambertMaterial({ color: '#9bd16a', flatShading: true }),
-);
-scene.add(prism);
+const reg = createRegistry(DEFAULT_PACKS);
+const seed = Number(new URLSearchParams(location.search).get('seed')) || 1;
+const state = createInitialState(seed, reg);
+const view = createWorldView(root, state);
+const canvas = view.ctx.renderer.domElement;
 
 const fps = createFpsMeter();
-Object.assign(fps.el.style, { position: 'fixed', left: '12px', bottom: '12px', font: '12px monospace' });
-app.appendChild(fps.el);
+root.appendChild(fps.el);
 
-let ticks = 0;
-startLoop({
-  getSpeed: () => 1,
-  step: (n) => {
-    ticks += n;
+attachInput(canvas, {
+  pan: (dx, dy) => view.rig.pan(dx, dy, canvas.clientHeight),
+  zoom: (deltaY) => view.rig.zoom(deltaY),
+  pinch: (factor) => view.rig.zoomBy(factor),
+  hover: (x, y) => {
+    const h = view.pickHex(x, y);
+    if (h) view.highlight.show(h, 'hover');
+    else view.highlight.hide();
   },
+  click: () => {},
+  cancel: () => {},
+  leave: () => view.highlight.hide(),
+});
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'q' || e.key === 'Q') view.rig.rotate(-1);
+  if (e.key === 'e' || e.key === 'E') view.rig.rotate(1);
+});
+
+startLoop({
+  getSpeed: () => 0,
+  step: () => {},
   render: (dt) => {
-    prism.rotation.y = ticks * 0.05;
-    renderer.render(scene, camera);
+    view.frame(dt);
     fps.frame(dt);
   },
 });
