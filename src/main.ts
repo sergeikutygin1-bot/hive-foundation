@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { startLoop } from './game/loop';
+import { createFpsMeter } from './game/fps';
 
 const app = document.getElementById('app');
 if (!app) throw new Error('#app not found');
@@ -25,7 +27,19 @@ const prism = new THREE.Mesh(
 );
 scene.add(prism);
 
-renderer.setAnimationLoop((timeMs) => {
-  prism.rotation.y = timeMs / 2000;
-  renderer.render(scene, camera);
+const fps = createFpsMeter();
+Object.assign(fps.el.style, { position: 'fixed', left: '12px', bottom: '12px', font: '12px monospace' });
+app.appendChild(fps.el);
+
+let ticks = 0;
+startLoop({
+  getSpeed: () => 1,
+  step: (n) => {
+    ticks += n;
+  },
+  render: (dt) => {
+    prism.rotation.y = ticks * 0.05;
+    renderer.render(scene, camera);
+    fps.frame(dt);
+  },
 });
