@@ -83,6 +83,7 @@ Flying bees, beekeeper movement, floating numbers, audio, orders, buying land, s
 | i18n | All strings through `t(key)`; EN only | Adding TR later is a new strings file |
 | Save | Autosave to localStorage in sub-project 1 | Nearly free with JSON state; avoids replaying from zero while testing |
 | Dead ends | Last producer cannot be removed; safety-net grant | Guarantees the player can always get production going again |
+| Art source | Fully procedural in sub-project 1; glTF models allowed later via the art registry | Matches the reference with no asset pipeline; real models can be dropped in per def id without touching sim or UI |
 
 ---
 
@@ -328,6 +329,8 @@ Each factory returns a `THREE.Group` built from primitives with flat shading and
 
 `render/art/registry.ts` maps a content def id to a factory. Content stays render-agnostic, so a new chain is a data pack plus an art module.
 
+The registry's factory contract (`def id → THREE.Object3D`) is deliberately source-agnostic. Sub-project 1 registers only procedural factories. A later sub-project can register a factory that loads a `.glb` model (Three.js `GLTFLoader`, e.g. from Blender, CC0 packs or AI 3D generators) for any def id, falling back to the procedural one, with no changes to `sim`, `ui` or `sync.ts`. glTF loading is **not** built in sub-project 1.
+
 ### 6.5 Sync, badges, picking
 
 - **Sync:** `sync.ts` keeps an entityId → `Object3D` map. `entityPlaced` / `entityRemoved` create or dispose objects, and tile colors update when a tile's type changes.
@@ -465,4 +468,5 @@ Autosave runs every 10 seconds and on `visibilitychange` (hidden) and `beforeunl
 - **Honey types:** `SourceDef.flowerType` already exists; sub-project 3 derives a producer's output from the dominant flower type in range.
 - **Land expansion:** `tiles[].owned` already gates building; sub-project 3 adds a purchase command.
 - **New chains:** a new content pack plus an art module; a new system only if the chain needs a new consumption kind.
+- **Authored 3D models:** register a glTF-loading factory in `render/art/registry.ts` for any def id (§6.4).
 - **Beekeeper movement:** `camera.focus(hex)` and the hex utilities are in place for A* in sub-project 2.
