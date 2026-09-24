@@ -2,7 +2,7 @@ import { COINS } from '../content/types';
 import { refundFor } from '../sim/economy';
 import { getRangeMap, outputPerDay } from '../sim/production';
 import type { Entity } from '../sim/state';
-import { formatKg, formatRate } from './format';
+import { formatKg, formatRate, showsAsZeroKg } from './format';
 import { h, setText } from './h';
 import { t, tx } from './i18n';
 import type { UiDeps } from './types';
@@ -29,6 +29,7 @@ export function createInspect(deps: UiDeps): Inspect {
   let rows: Row[] = [];
   let confirming = false;
   let confirmTimer: ReturnType<typeof setTimeout> | undefined;
+  let harvestButton: HTMLButtonElement | null = null;
 
   const rangeMap = () => getRangeMap(deps.getState(), deps.reg);
 
@@ -76,8 +77,10 @@ export function createInspect(deps: UiDeps): Inspect {
     if (source) parts.push(row(() => t('inspect.yield', { n: source.yieldPerDay })), row(describeFeeding));
 
     const actions: HTMLElement[] = [];
+    harvestButton = null;
     if (producer) {
-      actions.push(h('button', { class: 'btn primary', type: 'button', onclick: () => deps.dispatch({ type: 'harvest', id: entity.id }) }, t('inspect.harvest')));
+      harvestButton = h('button', { class: 'btn primary', type: 'button', onclick: () => deps.dispatch({ type: 'harvest', id: entity.id }) }, t('inspect.harvest'));
+      actions.push(harvestButton);
     }
     if (def.removable) {
       const label = t('inspect.remove', { coins: refundFor(def)[COINS] ?? 0 });
@@ -110,6 +113,7 @@ export function createInspect(deps: UiDeps): Inspect {
       return;
     }
     for (const r of rows) setText(r.el, r.value(entity));
+    if (harvestButton) harvestButton.disabled = showsAsZeroKg(entity.store ?? 0);
   };
 
   return {

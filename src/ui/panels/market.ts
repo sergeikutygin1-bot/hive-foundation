@@ -1,5 +1,5 @@
 import type { ResourceId } from '../../content/types';
-import { formatCoins, formatKg } from '../format';
+import { formatCoins, formatKg, showsAsZeroKg } from '../format';
 import { h, setText } from '../h';
 import { t, tx } from '../i18n';
 import { icon } from '../icons';
@@ -30,21 +30,22 @@ function createRow(deps: UiDeps, resource: ResourceId, pricePerUnit: number) {
     h('div', { class: 'market-actions' }, sell, sellAll),
   );
 
-  /** Returns whether this resource is on hand. */
+  /** Returns whether a displayable amount of this resource is on hand. */
   const render = (): boolean => {
     const kg = have();
+    const onHand = !showsAsZeroKg(kg);
     if (amount > kg) amount = kg;
     if (amount <= 0 && kg > 0) amount = Math.min(STEP_KG, kg);
     setText(haveEl, t('market.have', { kg: formatKg(kg) }));
     setText(amountEl, t('hud.kg', { kg: formatKg(amount) }));
     setText(preview, t('market.preview', { coins: formatCoins(amount * pricePerUnit) }));
     setText(sell, t('market.sell', { kg: formatKg(amount) }));
-    sell.disabled = amount <= 0;
-    sellAll.disabled = kg <= 0;
+    sell.disabled = !onHand || showsAsZeroKg(amount);
+    sellAll.disabled = !onHand;
     less.disabled = amount <= 0;
     more.disabled = amount >= kg;
-    el.hidden = kg <= 0;
-    return kg > 0;
+    el.hidden = !onHand;
+    return onHand;
   };
 
   less.addEventListener('click', () => {

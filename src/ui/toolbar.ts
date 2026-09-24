@@ -1,13 +1,15 @@
-import { formatKg } from './format';
+import type { Registry } from '../content/registry';
+import type { GameState } from '../sim/state';
+import { formatKg, showsAsZeroKg } from './format';
 import { h, setText } from './h';
 import { t } from './i18n';
 import { icon, type IconName } from './icons';
 import type { UiDeps } from './types';
 
-function readyToHarvest(deps: UiDeps): number {
-  const state = deps.getState();
+/** Output waiting in all producers. */
+export function readyToHarvest(reg: Registry, state: GameState): number {
   let total = 0;
-  for (const e of Object.values(state.entities)) if (deps.reg.buildable(e.def).producer) total += e.store ?? 0;
+  for (const e of Object.values(state.entities)) if (reg.buildable(e.def).producer) total += e.store ?? 0;
   return total;
 }
 
@@ -35,9 +37,9 @@ export function createToolbar(deps: UiDeps, actions: { openShop(): void; openMar
   return {
     el,
     update() {
-      const ready = readyToHarvest(deps);
-      harvest.disabled = ready <= 0;
-      kgBadge.hidden = ready <= 0;
+      const ready = readyToHarvest(deps.reg, deps.getState());
+      harvest.disabled = showsAsZeroKg(ready);
+      kgBadge.hidden = showsAsZeroKg(ready);
       setText(kgBadge, t('hud.kg', { kg: formatKg(ready) }));
     },
   };

@@ -4,3 +4,6 @@ const EPS = 1e-6;
 export const formatKg = (kg: number): string => (Math.floor(kg * 10 + EPS) / 10).toFixed(1);
 export const formatCoins = (coins: number): string => String(Math.floor(coins + EPS));
 export const formatRate = (perDay: number): string => perDay.toFixed(2);
+
+/** Amounts too small to display count as nothing, so buttons never offer "0.0 kg". */
+export const showsAsZeroKg = (kg: number): boolean => formatKg(kg) === formatKg(0);

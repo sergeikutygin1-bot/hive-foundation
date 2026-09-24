@@ -66,6 +66,19 @@ describe('inspect popover', () => {
     expect(state.inventory.honey_wildflower).toBe(2);
   });
 
+  it('disables Harvest until a visible amount is stored', () => {
+    const { deps, state } = makeDeps();
+    const [hive] = entitiesOf(state, 'hive');
+    hive.store = 0.001;
+    const inspect = createInspect(deps);
+    inspect.open(hive.id, at);
+    const harvest = [...inspect.el.querySelectorAll('button')].find((b) => b.textContent === 'Harvest')!;
+    expect(harvest.disabled).toBe(true);
+    hive.store = 0.5;
+    inspect.update();
+    expect(harvest.disabled).toBe(false);
+  });
+
   it('closes itself when its entity disappears', () => {
     const { deps, state } = makeDeps();
     const bed = bedAt(state, -1, 0);

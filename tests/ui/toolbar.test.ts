@@ -29,4 +29,13 @@ describe('toolbar', () => {
     harvest.click();
     expect(deps.dispatch).toHaveBeenCalledWith({ type: 'harvestAll' });
   });
+
+  it('stays disabled while the ready amount still displays as 0.0 kg', () => {
+    const { deps, state } = makeDeps();
+    const bar = createToolbar(deps, { openShop: vi.fn(), openMarket: vi.fn() });
+    entitiesOf(state, 'hive')[0].store = 0.00125;
+    bar.update();
+    expect(bar.el.querySelector<HTMLButtonElement>('.hexbtn.primary')!.disabled).toBe(true);
+    expect(bar.el.querySelector<HTMLElement>('.badge-kg')!.hidden).toBe(true);
+  });
 });

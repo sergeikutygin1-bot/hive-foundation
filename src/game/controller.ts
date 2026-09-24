@@ -9,7 +9,9 @@ import { canAfford } from '../sim/economy';
 import type { Entity, GameState, Speed } from '../sim/state';
 import type { Ui } from '../ui/app';
 import { reasonText } from '../ui/feedback';
+import { showsAsZeroKg } from '../ui/format';
 import { t, tx } from '../ui/i18n';
+import { readyToHarvest } from '../ui/toolbar';
 
 export type Mode = { kind: 'idle' } | { kind: 'placing'; def: string };
 type Point = { x: number; y: number };
@@ -123,7 +125,8 @@ export class Controller {
       }
       case 'h':
       case 'H':
-        this.deps.dispatch({ type: 'harvestAll' });
+        // Same rule as the Harvest All button: nothing visible, nothing to harvest.
+        if (!showsAsZeroKg(readyToHarvest(this.deps.reg, this.deps.getState()))) this.deps.dispatch({ type: 'harvestAll' });
         return true;
       case 'q':
       case 'Q':

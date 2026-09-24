@@ -63,6 +63,17 @@ describe('Market', () => {
     expect(empty.hidden).toBe(false);
   });
 
+  it('treats an amount that displays as 0.0 kg as nothing to sell', () => {
+    const { deps, state } = makeDeps();
+    state.inventory.honey_wildflower = 0.04;
+    const market = createMarketPanel(deps);
+    market.onOpen?.();
+    market.update();
+    expect(market.body.querySelector<HTMLElement>('.market-row')!.hidden).toBe(true);
+    const empty = [...market.body.querySelectorAll<HTMLElement>('p.muted')].find((p) => p.textContent === t('market.nothing'))!;
+    expect(empty.hidden).toBe(false);
+  });
+
   it('sells everything at once', () => {
     const { deps, state } = makeDeps();
     state.inventory.honey_wildflower = 2;

@@ -127,8 +127,16 @@ describe('keys', () => {
     expect(state.clock.speed).toBe(1);
   });
 
+  it('H does nothing while the ready amount displays as 0.0 kg', () => {
+    const { controller, send, state } = setup();
+    entitiesOf(state, 'hive')[0].store = 0.001;
+    controller.key('h');
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it('H harvests everything; Q/E rotate the camera', () => {
-    const { controller, send, view } = setup();
+    const { controller, send, view, state } = setup();
+    entitiesOf(state, 'hive')[0].store = 0.5;
     controller.key('h');
     expect(send).toHaveBeenLastCalledWith({ type: 'harvestAll' });
     controller.key('q');
