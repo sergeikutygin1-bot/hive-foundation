@@ -19,7 +19,8 @@ export function createScene(container: HTMLElement): SceneContext {
   renderer.toneMapping = THREE.NeutralToneMapping;
   renderer.toneMappingExposure = 1.0;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  // three r18x folded PCFSoftShadowMap into PCFShadowMap (soft filtering by default).
+  renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.domElement.className = 'world-canvas';
   container.appendChild(renderer.domElement);
 
