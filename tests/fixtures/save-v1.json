@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "seed": 7,
+  "nextId": 3,
+  "clock": { "tick": 1234, "speed": 2 },
+  "tiles": {
+    "0,0": { "tile": "grass", "owned": true, "entityId": "e1" },
+    "1,0": { "tile": "soil", "owned": true, "entityId": "e2" },
+    "0,1": { "tile": "grass", "owned": true },
+    "5,0": { "tile": "water", "owned": false },
+    "6,0": { "tile": "grass", "owned": false, "decor": "tree" }
+  },
+  "entities": {
+    "e1": { "id": "e1", "def": "hive", "hex": { "q": 0, "r": 0 }, "store": 1.5 },
+    "e2": { "id": "e2", "def": "bed_wildflower", "hex": { "q": 1, "r": 0 }, "prevTile": "grass" }
+  },
+  "inventory": { "coins": 42, "honey_wildflower": 0.5 },
+  "flags": { "fullNotified": {} }
+}
