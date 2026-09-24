@@ -53,6 +53,17 @@ describe('save / load', () => {
     }],
     ['an unknown building', (s) => ({ ...s, entities: { ...s.entities, e1: { ...s.entities.e1, def: 'castle' } } })],
     ['a non-object', () => 42],
+    ['an entity without a hex', (s) => {
+      const copy = structuredClone(s) as unknown as { entities: Record<string, Record<string, unknown>> };
+      delete copy.entities.e1.hex;
+      return copy;
+    }],
+    ['flags without fullNotified', (s) => ({ ...s, flags: {} })],
+    ['an unknown tile type', (s) => ({ ...s, tiles: { ...s.tiles, '0,0': { ...s.tiles['0,0'], tile: 'lava' } } })],
+    ['an impossible speed', (s) => ({ ...s, clock: { ...s.clock, speed: 1000 } })],
+    ['a rewound id counter', (s) => ({ ...s, nextId: 1 })],
+    ['a non-numeric store', (s) => ({ ...s, entities: { ...s.entities, e1: { ...s.entities.e1, store: '2' } } })],
+    ['an entity its tile does not point to', (s) => ({ ...s, tiles: { ...s.tiles, '0,0': { tile: 'grass', owned: true } } })],
   ];
 
   it.each(mutations)('treats a save with %s as corrupt, never crashing', (_label, mutate) => {

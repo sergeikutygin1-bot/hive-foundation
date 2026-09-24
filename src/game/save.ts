@@ -1,4 +1,6 @@
 import type { Registry } from '../content/registry';
+import { isTileId } from '../content/tiles';
+import { advance } from '../sim/advance';
 import { SAVE_VERSION, type GameState } from '../sim/state';
 
 export interface SaveStorage {
@@ -38,24 +40,53 @@ export function deserialize(raw: string, reg: Registry): GameState {
     version += 1;
   }
   assertGameState(data, reg);
+  // Last line of defence: a save that passes the shape checks must also survive one sim tick.
+  advance(structuredClone(data), reg, 1);
   return data;
 }
 
+const SPEEDS: readonly unknown[] = [0, 1, 2, 4];
+const isFiniteNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+
+/** Deep shape check: anything that passes can be rendered and simulated without throwing. */
 function assertGameState(data: unknown, reg: Registry): asserts data is GameState {
   if (!isObject(data)) throw new Error('Save is not an object');
-  if (typeof data.seed !== 'number' || typeof data.nextId !== 'number') throw new Error('Save is missing seed or nextId');
+  if (typeof data.seed !== 'number' || !Number.isInteger(data.nextId) || (data.nextId as number) < 1) {
+    throw new Error('Save is missing seed or nextId');
+  }
   const clock = data.clock;
-  if (!isObject(clock) || typeof clock.tick !== 'number' || typeof clock.speed !== 'number') {
+  if (!isObject(clock) || !Number.isInteger(clock.tick) || (clock.tick as number) < 0 || !SPEEDS.includes(clock.speed)) {
     throw new Error('Save has an invalid clock');
   }
   const { tiles, entities, inventory, flags } = data;
-  if (!isObject(tiles) || !isObject(entities) || !isObject(inventory) || !isObject(flags)) {
+  if (!isObject(tiles) || !isObject(entities) || !isObject(inventory) || !isObject(flags) || !isObject(flags.fullNotified)) {
     throw new Error('Save is missing tiles, entities, inventory or flags');
   }
-  for (const e of Object.values(entities)) {
-    if (!isObject(e) || typeof e.def !== 'string' || !reg.findBuildable(e.def)) {
-      throw new Error(`Save references an unknown building: ${JSON.stringify(e)}`);
+  for (const [key, tile] of Object.entries(tiles)) {
+    if (!isObject(tile) || typeof tile.tile !== 'string' || !isTileId(tile.tile) || typeof tile.owned !== 'boolean') {
+      throw new Error(`Save has an invalid tile at ${key}`);
     }
+    if (tile.decor !== undefined && tile.decor !== 'tree' && tile.decor !== 'rock') throw new Error(`Save has invalid decor at ${key}`);
+    if (tile.entityId !== undefined && (typeof tile.entityId !== 'string' || !isObject(entities[tile.entityId]))) {
+      throw new Error(`Save tile ${key} points at a missing entity`);
+    }
+  }
+  let highestId = 0;
+  for (const [id, e] of Object.entries(entities)) {
+    if (!isObject(e) || e.id !== id || typeof e.def !== 'string') throw new Error(`Save has a malformed entity ${id}`);
+    const def = reg.findBuildable(e.def);
+    if (!def) throw new Error(`Save references an unknown building: ${JSON.stringify(e)}`);
+    const at = e.hex;
+    if (!isObject(at) || !Number.isInteger(at.q) || !Number.isInteger(at.r)) throw new Error(`Save entity ${id} has no position`);
+    const home = tiles[`${at.q},${at.r}`];
+    if (!isObject(home) || home.entityId !== id) throw new Error(`Save entity ${id} is not linked to its tile`);
+    if (def.producer && (!isFiniteNumber(e.store) || e.store < 0)) throw new Error(`Save entity ${id} has an invalid store`);
+    const n = /^e(\d+)$/.exec(id);
+    if (n) highestId = Math.max(highestId, Number(n[1]));
+  }
+  if ((data.nextId as number) <= highestId) throw new Error('Save id counter is behind its entities');
+  for (const [res, amount] of Object.entries(inventory)) {
+    if (!isFiniteNumber(amount)) throw new Error(`Save has an invalid amount of ${res}`);
   }
 }
 
