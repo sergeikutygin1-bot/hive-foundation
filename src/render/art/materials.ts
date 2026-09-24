@@ -5,9 +5,9 @@ let solid: THREE.MeshLambertMaterial | null = null;
 let veil: THREE.MeshLambertMaterial | null = null;
 const ghosts = new Map<'valid' | 'invalid', THREE.MeshBasicMaterial>();
 
-/** Shared by every prop: colors come from vertex colors, faces are flat-shaded. */
+/** Shared by every prop: colors come from vertex colors; shading is smooth so rounded parts read soft. */
 export function solidMaterial(): THREE.MeshLambertMaterial {
-  solid ??= new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true });
+  solid ??= new THREE.MeshLambertMaterial({ vertexColors: true });
   return solid;
 }
 

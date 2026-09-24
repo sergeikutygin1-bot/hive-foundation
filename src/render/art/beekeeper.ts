@@ -12,8 +12,8 @@ export function makeBeekeeper(): THREE.Group {
     sphere(0.04, 6, 4, palette.glove, { at: [0.16, 0.14, 0] }),
     sphere(0.04, 6, 4, palette.glove, { at: [-0.16, 0.14, 0] }),
     sphere(0.08, 10, 8, palette.skin, { at: [0, 0.44, 0] }),
-    cylinder(0.18, 0.18, 0.015, 14, palette.hat, { at: [0, 0.52, 0] }),
-    cylinder(0.08, 0.09, 0.08, 12, palette.hat, { at: [0, 0.57, 0] }),
+    cylinder(0.18, 0.18, 0.015, 20, palette.hat, { at: [0, 0.52, 0] }),
+    cylinder(0.08, 0.09, 0.08, 16, palette.hat, { at: [0, 0.57, 0] }),
   ]);
   const veilGeo = colored(new THREE.CylinderGeometry(0.12, 0.16, 0.14, 14, 1, true), palette.veil, { at: [0, 0.44, 0] });
 
@@ -22,6 +22,7 @@ export function makeBeekeeper(): THREE.Group {
   const veil = new THREE.Mesh(veilGeo, veilMaterial());
   const group = new THREE.Group();
   group.name = 'beekeeper';
+  group.scale.setScalar(1.5);
   group.add(bodyMesh, veil);
   return group;
 }

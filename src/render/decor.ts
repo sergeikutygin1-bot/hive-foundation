@@ -20,7 +20,7 @@ export function createDecorLayer(tiles: Record<HexKey, Tile>, seed: number) {
     const r2 = hash2(h.r, h.q, seed + 23);
     const r3 = hash2(h.q + h.r, h.q - h.r, seed + 37);
     const kind: DecorKind = tile.decor === 'rock' ? 'rock' : r1 < 0.6 ? 'round' : 'pine';
-    const s = 0.8 + r2 * 0.45;
+    const s = (kind === 'rock' ? 0.8 : 1.0) + r2 * 0.45;
     buckets[kind].push(
       new THREE.Matrix4().compose(
         new THREE.Vector3(x + (r3 - 0.5) * 0.3, 0, z + (r1 - 0.5) * 0.3),

@@ -65,7 +65,7 @@ export class BadgeLayer {
     badge.append(label, bar);
     anchorEl.append(badge);
     const anchor = new CSS2DObject(anchorEl);
-    anchor.position.set(0, 1.05, 0);
+    anchor.position.set(0, 1.2, 0);
     return { anchor, badge, fill, label, shown: '' };
   }
 }

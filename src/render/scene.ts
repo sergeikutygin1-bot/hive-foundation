@@ -16,7 +16,7 @@ export function createScene(container: HTMLElement): SceneContext {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMapping = THREE.NeutralToneMapping;
   renderer.toneMappingExposure = 1.0;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -28,7 +28,7 @@ export function createScene(container: HTMLElement): SceneContext {
   container.appendChild(labels.domElement);
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(palette.fog, 30, 60);
+  scene.fog = new THREE.Fog(palette.fog, 40, 75);
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 200);
 
   const resize = () => {

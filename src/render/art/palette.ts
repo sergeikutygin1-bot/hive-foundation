@@ -1,11 +1,11 @@
 /** Every color in the game world. Tune these at the art gate (Task 17). */
 export const palette = {
-  ground: '#5d7a45',
-  grass: '#9fd46b',
-  grassLocked: '#b4c38f',
+  ground: '#6a8a4f',
+  grass: '#a6d67c',
+  grassLocked: '#b2c68f',
   soil: '#7c5237',
   water: '#79c3de',
-  tuft: '#6d9c47',
+  tuft: '#7aa656',
   trunk: '#7a5236',
   leaf1: '#6cab4f',
   leaf2: '#87c45c',

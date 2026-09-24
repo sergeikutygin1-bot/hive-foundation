@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { flowerColors, palette } from './palette';
-import { cylinder, ico, merge } from './parts';
+import { cylinder, merge, sphere } from './parts';
 
 const FLOWERS_PER_BED = 11;
 const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
@@ -19,9 +19,9 @@ export function makeFlowerBed(flowerType: string): THREE.BufferGeometry {
     const petal = colors[i % colors.length];
     for (let p = 0; p < 5; p++) {
       const a = (p / 5) * Math.PI * 2 + i;
-      parts.push(ico(0.032, petal, { scale: [1, 0.45, 1], at: [x + Math.cos(a) * 0.04, height, z + Math.sin(a) * 0.04] }));
+      parts.push(sphere(0.032, 6, 4, petal, { scale: [1, 0.45, 1], at: [x + Math.cos(a) * 0.04, height, z + Math.sin(a) * 0.04] }));
     }
-    parts.push(ico(0.026, palette.flowerCenter, { at: [x, height + 0.01, z] }));
+    parts.push(sphere(0.026, 6, 4, palette.flowerCenter, { at: [x, height + 0.01, z] }));
   }
   return merge(parts);
 }

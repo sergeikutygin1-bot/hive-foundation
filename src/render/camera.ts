@@ -12,7 +12,7 @@ export interface RigPose {
 
 export const PITCH = THREE.MathUtils.degToRad(50);
 export const YAW_STEP = Math.PI / 3;
-export const RIG_HOME = { targetX: 0, targetZ: 0, distance: 16 } as const;
+export const RIG_HOME = { targetX: 0, targetZ: 0, distance: 11 } as const;
 export const RIG_LIMITS = { minDistance: 7, maxDistance: 34, maxTargetRadius: 16 } as const;
 
 export function cameraPosition(p: RigPose): THREE.Vector3 {

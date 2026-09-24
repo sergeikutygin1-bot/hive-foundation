@@ -5,7 +5,7 @@ import { makeBeekeeper } from './art/beekeeper';
 import { createArt } from './art/registry';
 import type { TileLayer } from './tiles';
 
-/** The beekeeper stands at the front-right corner of this building. */
+/** The beekeeper stands just in front of this building's door. */
 const BEEKEEPER_HOME_DEF = 'house';
 
 /** Keeps one 3D object per entity, and refreshes the tile under anything that appears or disappears. */
@@ -67,6 +67,6 @@ export class EntitySync {
       this.parent.add(this.beekeeper);
     }
     const { x, z } = hexToWorld(home.hex);
-    this.beekeeper.position.set(x + 0.55, 0, z + 0.55);
+    this.beekeeper.position.set(x - 0.28, 0, z + 0.6);
   }
 }

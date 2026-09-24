@@ -6,7 +6,7 @@ import { palette } from './art/palette';
 
 const TILE_HEIGHT = 0.3;
 const WATER_DROP = 0.12;
-const TILE_SCALE = 0.95; // gaps show the darker ground plane as seams
+const TILE_SCALE = 0.935; // gaps show the darker ground plane as seams
 const TUFTS_PER_TILE = 6;
 
 export interface TileLayer {
@@ -24,7 +24,7 @@ export function tileColor(tile: Tile, jitter: number, out = new THREE.Color()): 
     : tile.tile === 'soil' ? palette.soil
     : tile.owned ? palette.grass
     : palette.grassLocked;
-  return out.set(base).offsetHSL(0, 0, (jitter - 0.5) * 0.06);
+  return out.set(base).offsetHSL(0, 0, (jitter - 0.5) * 0.04);
 }
 
 /** One instanced draw call for every tile, one for every grass tuft. */
