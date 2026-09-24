@@ -9,6 +9,7 @@ import { Controller } from './game/controller';
 import { installDevTools } from './game/devtools';
 import { createFpsMeter } from './game/fps';
 import { attachInput } from './game/input';
+import { createFocusTracker, routeKey } from './game/keys';
 import { startLoop } from './game/loop';
 import { browserStorage, clearSave, loadGame, saveGame } from './game/save';
 import { Session } from './game/session';
@@ -102,11 +103,11 @@ function boot(): void {
     leave: () => controller.hover(null, null),
   });
 
+  const focus = createFocusTracker(window);
   window.addEventListener('keydown', (e) => {
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
-    // Let focused buttons keep Space/Enter; never steal typing.
-    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-    if (e.target instanceof HTMLButtonElement && (e.key === ' ' || e.key === 'Enter')) return;
+    if (routeKey(e, () => focus.isKeyboardFocused()) !== 'game') return;
+    // Drop mouse focus so this key acts as a shortcut, not a second click on the button.
+    if (e.target instanceof HTMLButtonElement) e.target.blur();
     if (controller.key(e.key)) e.preventDefault();
   });
 
